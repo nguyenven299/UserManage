@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewmodel"
+            type="com.usermanage.view.ui.profile.ProfileFragmentViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutMain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        android:fitsSystemWindows="true">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFF"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/hinhDaiDien"
+            android:layout_width="@dimen/dp200"
+            android:layout_height="@dimen/dp200"
+            android:layout_gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iconEmail"
+            android:layout_width="@dimen/dp50"
+            android:layout_height="@dimen/dp50"
+            android:background="@drawable/ic_email"
+            app:layout_constraintBottom_toTopOf="@+id/iconName"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_title_email"
+            android:layout_width="@dimen/dp200"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/email"
+            android:textColor="#f000"
+            android:textSize="@dimen/dp12"
+            app:layout_constraintBottom_toTopOf="@+id/tx_email"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iconEmail"
+            app:layout_constraintTop_toTopOf="@+id/iconEmail" />
+
+        <TextView
+            android:id="@+id/tx_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@{viewmodel.email}"
+            android:textColor="#f000"
+            android:textSize="@dimen/dp25"
+            app:layout_constraintBottom_toBottomOf="@+id/iconEmail"
+            app:layout_constraintEnd_toEndOf="@+id/tv_title_email"
+            app:layout_constraintStart_toStartOf="@+id/tv_title_email"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title_email" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iconBirthday"
+            android:layout_width="@dimen/dp50"
+            android:layout_height="@dimen/dp50"
+            android:background="@drawable/ic_birthday"
+            app:layout_constraintBottom_toTopOf="@+id/iconPhoneNumber"
+            app:layout_constraintEnd_toEndOf="@+id/iconName"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/iconName"
+            app:layout_constraintTop_toBottomOf="@+id/iconName" />
+
+        <TextView
+            android:id="@+id/tv_title_birthday"
+            android:layout_width="@dimen/dp200"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/birthDay"
+            android:textColor="#f000"
+            android:textSize="@dimen/dp12"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/iconBirthday"
+            app:layout_constraintTop_toTopOf="@+id/iconBirthday" />
+
+        <TextView
+            android:id="@+id/tv_birthday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@{viewmodel.birthday}"
+            android:textColor="#f000"
+            android:textSize="@dimen/dp25"
+            app:layout_constraintBottom_toBottomOf="@+id/iconBirthday"
+            app:layout_constraintEnd_toEndOf="@+id/tv_title_birthday"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/tv_title_birthday"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title_birthday" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iconPhoneNumber"
+            android:layout_width="@dimen/dp50"
+            android:layout_height="@dimen/dp50"
+            android:background="@drawable/ic_phone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/iconBirthday"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/iconBirthday"
+            app:layout_constraintTop_toBottomOf="@+id/iconBirthday" />
+
+        <TextView
+            android:id="@+id/tv_title_phoneNumber"
+            android:layout_width="@dimen/dp200"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:gravity="center"
+            android:text="@string/phoneNumber"
+            android:textColor="#f000"
+            android:textSize="@dimen/dp12"
+            app:layout_constraintBottom_toTopOf="@+id/tv_phoneNumber"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/iconPhoneNumber"
+            app:layout_constraintTop_toTopOf="@+id/iconPhoneNumber" />
+
+        <TextView
+            android:id="@+id/tv_phoneNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@{viewmodel.phoneNumber}"
+            android:textColor="#f000"
+            android:textSize="@dimen/dp25"
+            app:layout_constraintBottom_toBottomOf="@+id/iconPhoneNumber"
+            app:layout_constraintEnd_toEndOf="@+id/tv_title_phoneNumber"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/tv_title_phoneNumber"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title_phoneNumber" />
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iconName"
+            android:layout_width="@dimen/dp50"
+            android:layout_height="@dimen/dp50"
+            android:background="@drawable/ic_name"
+            app:layout_constraintBottom_toTopOf="@+id/iconBirthday"
+            app:layout_constraintEnd_toEndOf="@+id/iconEmail"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/iconEmail"
+            app:layout_constraintTop_toBottomOf="@+id/iconEmail" />
+
+        <TextView
+            android:id="@+id/tv_title_name"
+            android:layout_width="@dimen/dp200"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:gravity="center"
+            android:text="@string/fullName"
+            android:textColor="#f000"
+            android:textSize="@dimen/dp12"
+            app:layout_constraintBottom_toTopOf="@+id/tx_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/iconName"
+            app:layout_constraintTop_toTopOf="@+id/iconName" />
+
+        <TextView
+            android:id="@+id/tx_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@{viewmodel.name}"
+            android:textColor="#f000"
+            android:textSize="@dimen/dp25"
+            app:layout_constraintBottom_toBottomOf="@+id/iconName"
+            app:layout_constraintEnd_toEndOf="@+id/tv_title_name"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/tv_title_name"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title_name" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.35" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

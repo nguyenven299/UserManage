@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "969166332283",
+    "project_id": "mioto-c560e",
+    "storage_bucket": "mioto-c560e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:969166332283:android:ba3a4cd8086f13f0af9dde",
+        "android_client_info": {
+          "package_name": "com.example.usermanage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "969166332283-pu20tplrg8apkd9bi7qa904g87qp6e3o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKj6UgM35CHiT-JL9zhcCknwmPaJlFPCE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "969166332283-pu20tplrg8apkd9bi7qa904g87qp6e3o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewmodel"
+            type="com.usermanage.view.login.LoginActivityViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutMain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_main_activity"
+        android:fitsSystemWindows="true"
+        tools:context="com.usermanage.view.login.LoginActivity">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/im_iconLogo"
+            android:layout_width="@dimen/dp200"
+            android:layout_height="@dimen/dp200"
+            android:src="@drawable/ic_launcher_foreground"
+            app:layout_constraintBottom_toTopOf="@+id/et_account"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/et_account"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp50"
+            android:layout_marginHorizontal="@dimen/dp20"
+            android:background="@drawable/background_et"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            android:paddingLeft="@dimen/dp15"
+            android:text="@={viewmodel.email}"
+            app:error="@{viewmodel.errorEmail}"
+            app:layout_constraintBottom_toTopOf="@+id/layout_et_password"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/im_iconLogo" />
+
+        <LinearLayout
+            android:id="@+id/layout_et_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dp20"
+            android:background="@drawable/background_et"
+            app:layout_constraintBottom_toTopOf="@+id/bt_login"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_account">
+
+            <EditText
+                android:id="@+id/et_password"
+                android:layout_width="@dimen/dp320"
+                android:layout_height="@dimen/dp50"
+                android:background="@drawable/background_et"
+                android:hint="@string/password"
+                android:paddingLeft="@dimen/dp15"
+                android:text="@={viewmodel.password}"
+                app:error="@{viewmodel.errorPassword}" />
+
+            <ImageButton
+                android:id="@+id/ib_showPassword"
+                android:layout_width="@dimen/dp50"
+                android:layout_height="@dimen/dp50"
+                android:background="@drawable/background_et"
+                android:onClick="@{()->viewmodel.onClickShowPassword()}"
+                android:src="@{viewmodel.showPassword ? @drawable/ic_eye_close :@drawable/ic_eye}" />
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/bt_login"
+            android:layout_width="@dimen/dp200"
+            android:layout_height="@dimen/dp50"
+            android:background="@drawable/background_bt_login"
+            android:onClick="@{()-> viewmodel.onClickLogin()}"
+            android:text="@string/login"
+            android:textColor="@color/black"
+            android:textSize="@dimen/dp15"
+            app:layout_constraintBottom_toTopOf="@+id/bt_signup"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_et_password" />
+
+        <Button
+            android:id="@+id/bt_signup"
+            android:layout_width="@dimen/dp130"
+            android:layout_height="@dimen/dp50"
+            android:background="@drawable/background_transparent"
+            android:text="@string/register"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/et_login"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/bt_forgotpassword"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bt_login" />
+
+        <Button
+            android:id="@+id/bt_forgotpassword"
+            android:layout_width="@dimen/dp130"
+            android:layout_height="@dimen/dp50"
+            android:background="@drawable/background_transparent"
+            android:text="@string/forgotpassword"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/bt_signup"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/bt_signup"
+            app:layout_constraintTop_toTopOf="@+id/bt_signup" />
+
+        <TextView
+            android:id="@+id/et_login"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp50"
+            android:gravity="center"
+            android:text="Đăng nhập với"
+            android:textColor="#005b96"
+            android:textSize="@dimen/dp20"
+            app:layout_constraintBottom_toTopOf="@+id/bt_loginFb"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bt_signup" />
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/bt_loginFb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/bt_loginGG"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_login" />
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/bt_loginGG"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/bt_loginFb"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/bt_loginFb"
+            app:layout_constraintTop_toBottomOf="@+id/bt_loginFb" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

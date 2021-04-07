@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewmodel"
+            type="com.usermanage.view.insertData.InsertDataActivityViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutMain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_main_activity"
+        android:fitsSystemWindows="true"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_email"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp50"
+            android:layout_marginHorizontal="@dimen/dp20"
+            android:background="@drawable/background_et"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/dp15"
+            android:hint="@string/email"
+            android:text="@{viewmodel.email}"
+            app:layout_constraintBottom_toTopOf="@+id/ed_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/ed_name"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp50"
+            android:layout_marginHorizontal="@dimen/dp20"
+            android:background="@drawable/background_et"
+            android:hint="@string/fullName"
+            android:inputType="textEmailAddress"
+            android:paddingLeft="@dimen/dp15"
+            android:text="@={viewmodel.name}"
+            app:error="@{viewmodel.errorName}"
+            app:layout_constraintBottom_toTopOf="@+id/et_phoneNumber"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_email" />
+
+        <EditText
+            android:id="@+id/et_phoneNumber"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp50"
+            android:layout_marginHorizontal="@dimen/dp20"
+            android:background="@drawable/background_et"
+            android:hint="@string/phoneNumber"
+            android:inputType="phone"
+            android:paddingLeft="@dimen/dp15"
+            android:text="@={viewmodel.phoneNumber}"
+            app:error="@{viewmodel.errorPhoneNumber}"
+            app:layout_constraintBottom_toTopOf="@+id/dp_birthday"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ed_name" />
+
+        <TextView
+            android:id="@+id/dp_birthday"
+
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp50"
+            android:layout_marginHorizontal="@dimen/dp20"
+            android:background="@drawable/background_et"
+            android:focusableInTouchMode="false"
+            android:gravity="center_vertical"
+            android:hint="@string/birthDay"
+            android:paddingLeft="@dimen/dp15"
+            android:text="@={viewmodel.birthday}"
+            app:error="@{viewmodel.errorBirthday}"
+            app:layout_constraintBottom_toTopOf="@+id/bt_accept"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_phoneNumber" />
+
+        <Button
+            android:id="@+id/bt_accept"
+            android:layout_width="@dimen/dp200"
+            android:layout_height="@dimen/dp50"
+            android:background="@drawable/background_bt_login"
+            android:onClick="@{()-> viewmodel.onClicked()}"
+            android:text="@string/accept"
+            android:textColor="@color/black"
+            android:textSize="@dimen/dp15"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dp_birthday" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
