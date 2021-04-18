@@ -22,7 +22,7 @@ public class ForgotPasswordActivityViewModel extends ViewModel {
         if (mEmail == null || mEmail.isEmpty()) {
             errorEmail.setValue("Vui lòng nhập Email");
         } else {
-            firebaseAuth.sendPasswordResetEmail(mEmail)
+            firebaseAuth.sendPasswordResetEmail(mEmail.trim())
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -38,5 +38,6 @@ public class ForgotPasswordActivityViewModel extends ViewModel {
                             Log.d("errorResetPassword", "onFailure: " + e.getMessage());
                         }
                     });
-        }    }
+        }
+    }
 }

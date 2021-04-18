@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.usermanage.model.AccountModel;
 
@@ -28,8 +27,6 @@ public class ChangePasswordAccount {
 
         void onFail(String fail);
 
-        void onFalse(String onfalse);
-
     }
 
     public void changePassword(FirebaseFirestore mFirestore, FirebaseAuth mAuth, AccountModel mAccountModel, IChangePasswordAccount iChangePasswordAccount) {
@@ -37,16 +34,22 @@ public class ChangePasswordAccount {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        iChangePasswordAccount.onSuccess("Thay đổi mật khẩu thành công");
+                        iChangePasswordAccount.onSuccess("Change Success");
+                        updatePasswordDB(mAccountModel, mFirestore);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.d("changePasswordAuth", "onFailure: " + e.getMessage());
-
+                        iChangePasswordAccount.onFail(e.getMessage());
                     }
                 });
     }
 
+    private void updatePasswordDB(AccountModel mAccountModel, FirebaseFirestore firebaseFirestore) {
+        Map<String, Object> account = new HashMap<>();
+        account.put("Password", mAccountModel.getNewPassword());
+        firebaseFirestore.collection("Users").document(mAccountModel.getUid()).update(account);
+    }
 }

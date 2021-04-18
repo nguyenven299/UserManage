@@ -10,11 +10,11 @@ import android.widget.Toast;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.usermanage.dao.user.User;
 import com.usermanage.dao.user.UserDatabase;
 import com.usermanage.model.UserModel;
 import com.usermanage.viewModel.dataUser.UpdateDataUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -70,7 +70,6 @@ public class UpdateDataUserActivityViewModel extends ViewModel {
             cal.setTimeInMillis(birthdayTemp.getValue());
             birthday.setValue(df.format(cal.getTime()));
         }
-        Log.d("idididid", "setUser: " + mCurrentDay);
     }
 
     public void selectBirthday(Context context) {
@@ -86,27 +85,24 @@ public class UpdateDataUserActivityViewModel extends ViewModel {
         String mPhoneNumber = phoneNumber.getValue();
         Long mBirthday = birthdayTemp.getValue();
         String Empty = "Trường này không được trống";
-        Log.d("tttttt", "OnClick: " + uid.getValue());
         mUserModel.setEmail(mEmail);
         mUserModel.setUid(uid.getValue());
         if (mName == null || mName.isEmpty() || mName.equals("defined")) {
             errorName.setValue(Empty);
         } else {
-            mUserModel.setName(mName);
+            mUserModel.setName(mName.trim());
         }
         if (mBirthday == null || mBirthday.equals("defined")) {
             errorBirthday.setValue(Empty);
-            Log.d("ttrweerw", "OnClick: null");
         } else if (mCurrentDay < mBirthday) {
-            Log.d("utututut", "OnClick: " + mCurrentDay + " / " + mBirthday);
             errorBirthday.setValue("Ngày sinh không hợp lệ");
         } else {
-            mUserModel.setBirthday(mBirthday.toString());
+            mUserModel.setBirthday(mBirthday.toString().trim());
         }
         if (mPhoneNumber == null || mPhoneNumber.isEmpty() || mPhoneNumber.equals("defined")) {
             errorPhoneNumber.setValue(Empty);
         } else {
-            mUserModel.setPhoneNumber(mPhoneNumber);
+            mUserModel.setPhoneNumber(mPhoneNumber.trim());
         }
         if (mUserModel.getName() != null && !mUserModel.getName().isEmpty()
                 && mUserModel.getBirthday() != null && !mUserModel.getBirthday().isEmpty()

@@ -12,6 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.usermanage.model.UserModel;
 import com.usermanage.viewModel.dataUser.InsertDataUser;
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -48,6 +49,7 @@ public class InsertDataActivityViewModel extends ViewModel {
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
             birthday.setValue(sdf.format(myCalendar.getTime()));
             birthdayTemp.setValue(dayTime);
+
         }
     };
 
@@ -76,7 +78,7 @@ public class InsertDataActivityViewModel extends ViewModel {
         if (mName == null || mName.isEmpty() || mName.equals("defined")) {
             errorName.setValue(Empty);
         } else {
-            mUserModel.setName(mName);
+            mUserModel.setName(mName.trim());
         }
         if (mBirthday == null || mBirthday.isEmpty() || mBirthday.equals("defined")) {
             errorBirthday.setValue(Empty);
@@ -88,7 +90,7 @@ public class InsertDataActivityViewModel extends ViewModel {
         if (mPhoneNumber == null || mPhoneNumber.isEmpty() || mPhoneNumber.equals("defined")) {
             errorPhoneNumber.setValue(Empty);
         } else {
-            mUserModel.setPhoneNumber(mPhoneNumber);
+            mUserModel.setPhoneNumber(mPhoneNumber.trim());
         }
         if (mUserModel.getName() != null && !mUserModel.getName().isEmpty()
                 && mUserModel.getBirthday() != null && !mUserModel.getBirthday().isEmpty()

@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.example.usermanage.R;
 import com.example.usermanage.databinding.ActivityForgotPasswordBinding;
+import com.usermanage.CloseKeyboardClickOutside;
 import com.usermanage.TransparentStatusBar;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
@@ -24,12 +25,11 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDatabiding = DataBindingUtil.setContentView(ForgotPasswordActivity.this, R.layout.activity_forgot_password);
-        mViewModel = new ViewModelProvider(this).get(ForgotPasswordActivityViewModel.class);
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        mDatabiding.setViewmodel(mViewModel);
-        mDatabiding.setLifecycleOwner(this);
-        new TransparentStatusBar(this);
+        initUit();
+        initData();
+    }
+
+    private void initData() {
         Glide.with(this).load(R.drawable.ic_launcher_foreground).into(mDatabiding.imIconLogo);
         mViewModel.sendEmailResetPassword.observe(this, new Observer<Boolean>() {
             @Override
@@ -43,6 +43,16 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void initUit() {
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        new TransparentStatusBar(this);
+        mDatabiding = DataBindingUtil.setContentView(ForgotPasswordActivity.this, R.layout.activity_forgot_password);
+        mViewModel = new ViewModelProvider(this).get(ForgotPasswordActivityViewModel.class);
+        mDatabiding.setViewmodel(mViewModel);
+        mDatabiding.setLifecycleOwner(this);
+        mDatabiding.layoutMain.setOnClickListener(new CloseKeyboardClickOutside(this));
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("");

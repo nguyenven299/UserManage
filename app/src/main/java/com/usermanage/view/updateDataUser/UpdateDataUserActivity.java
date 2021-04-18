@@ -1,8 +1,6 @@
 package com.usermanage.view.updateDataUser;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -13,10 +11,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.usermanage.R;
 import com.example.usermanage.databinding.ActivityUpdateDataUserBinding;
+import com.usermanage.CloseKeyboardClickOutside;
 import com.usermanage.TransparentStatusBar;
-import com.usermanage.model.UserModel;
 import com.usermanage.model.UserViewModel;
-import com.usermanage.view.main.MainActivity;
 import com.usermanage.viewModel.dataUser.GetUid;
 
 public class UpdateDataUserActivity extends AppCompatActivity {
@@ -27,16 +24,33 @@ public class UpdateDataUserActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initUi();
+        initData();
+    }
+
+    private void initData() {
+        mViewModel.insertSuccess.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) {
+                    finish();
+                }
+            }
+        });
+    }
+
+    private void initUi() {
+        new TransparentStatusBar(this);
         mDatabinding = DataBindingUtil.setContentView(this, R.layout.activity_update_data_user);
         mViewModel = new ViewModelProvider(this).get(UpdateDataUserActivityViewModel.class);
         mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         mDatabinding.setViewmodel(mViewModel);
         mDatabinding.setLifecycleOwner(this);
+        mDatabinding.layoutMain.setOnClickListener(new CloseKeyboardClickOutside(this));
         setSupportActionBar(mDatabinding.toolbar);
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
-        new TransparentStatusBar(this);
         mViewModel.contextMutableLiveData.setValue(this);
         mViewModel.activityMutableLiveData.setValue(UpdateDataUserActivity.this);
         mDatabinding.dpBirthday.setOnClickListener(new View.OnClickListener() {
@@ -46,14 +60,6 @@ public class UpdateDataUserActivity extends AppCompatActivity {
             }
         });
         mViewModel.setUser(GetUid.getInstance().get(UpdateDataUserActivity.this));
-        mViewModel.insertSuccess.observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) {
-                    finish();
-                }
-            }
-        });
     }
 
     @Override

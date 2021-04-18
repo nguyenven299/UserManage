@@ -25,10 +25,10 @@ public class StartActivityViewModel extends ViewModel {
     private SimpleDateFormat mDateFormat = new SimpleDateFormat("dd/MM/yyyy");
     public MutableLiveData<Boolean> successLogin = new MutableLiveData<>(false);
     public MutableLiveData<Boolean> successSession = new MutableLiveData<>(false);
+    public MutableLiveData<Boolean> sessionResult = new MutableLiveData<>();
 
     public void checkUserCurrent() {
         String Uid = GetUid.getInstance().get(activityMutableLiveData.getValue());
-        Log.d("asdasdss", "checkUserCurrent: " + Uid);
         if (Uid == null || Uid.isEmpty()) {
             successLogin.setValue(true);
         } else {
@@ -45,7 +45,7 @@ public class StartActivityViewModel extends ViewModel {
             e.printStackTrace();
         }
         if (mCalendar.getTime().getTime() - date > 604800000) {
-            Toast.makeText(activityMutableLiveData.getValue(), "Phiên bản hét han", Toast.LENGTH_SHORT).show();
+            sessionResult.setValue(true);
             LogOutAccount.getInstance().checkAccountForLogout(activityMutableLiveData.getValue());
             successLogin.setValue(true);
             UserDatabase userDatabase = UserDatabase.getInsance(activityMutableLiveData.getValue());

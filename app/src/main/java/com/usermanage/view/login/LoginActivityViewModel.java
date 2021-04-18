@@ -3,11 +3,8 @@ package com.usermanage.view.login;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -21,14 +18,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.usermanage.model.AccountModel;
 import com.usermanage.model.UserModel;
-import com.usermanage.view.insertData.InsertDataActivity;
 import com.usermanage.view.main.MainActivity;
 import com.usermanage.viewModel.authentication.LoginUserEmail;
 import com.usermanage.viewModel.dataUser.GetDataUser;
 import com.usermanage.viewModel.dataUser.InsertDataUser;
 import com.usermanage.viewModel.dataUser.SaveUid;
-
-import java.io.ByteArrayOutputStream;
 
 public class LoginActivityViewModel extends ViewModel {
     public MutableLiveData<String> email = new MutableLiveData<>();
@@ -44,35 +38,40 @@ public class LoginActivityViewModel extends ViewModel {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
     private UserModel mUserModel;
+    public MutableLiveData<String> loginResultFail = new MutableLiveData<>();
+    public MutableLiveData<Boolean> showProgressBar = new MutableLiveData<>(false);
+    public MutableLiveData<String> insertDataUser = new MutableLiveData<>();
 
     public void onClickLogin() {
         String mEmail = email.getValue();
         String mPassword = password.getValue();
         String empty = "Trường này không được trống";
-
         if (mEmail == null || mEmail.isEmpty()) {
             errorEmail.setValue(empty);
         } else {
-            mAccountModel.setAccount(mEmail);
+            mAccountModel.setAccount(mEmail.trim());
         }
         if (mPassword == null || mPassword.isEmpty()) {
             errorPassword.setValue(empty);
         } else {
-            mAccountModel.setPassword(mPassword);
+            mAccountModel.setPassword(mPassword.trim());
         }
         if (mAccountModel.getAccount() != null && !mAccountModel.getAccount().isEmpty()
                 && mAccountModel.getPassword() != null && !mAccountModel.getPassword().isEmpty()
         ) {
+            showProgressBar.setValue(true);
             LoginUserEmail.getInstance().loginUser(mAuth, mAccountModel, new LoginUserEmail.ILoginUserEmail() {
                 @Override
                 public void onSuccess(String success) {
+                    showProgressBar.setValue(false);
 
                 }
 
                 @Override
                 public void onFail(String fail) {
                     Log.d("errorLogin", "onFail: " + fail);
-                    Toast.makeText(contextMutableLiveData.getValue(), fail, Toast.LENGTH_SHORT).show();
+                    loginResultFail.setValue(fail);
+                    showProgressBar.setValue(false);
                 }
 
                 @Override
@@ -90,11 +89,14 @@ public class LoginActivityViewModel extends ViewModel {
             @Override
             public void run() {
                 if (profile.getProfilePictureUri(500, 500) != null) {
-                    mUserModel = new UserModel(profile.getId(), "", profile.getName(), "", "", profile.getProfilePictureUri(500, 500).toString());
-
-
+                    mUserModel = new UserModel();
+                    mUserModel.setUid(profile.getId());
+                    mUserModel.setName(profile.getName());
+                    mUserModel.setAvatar(profile.getProfilePictureUri(500, 500).toString());
                 } else {
-                    mUserModel = new UserModel(profile.getId(), "", profile.getName(), "", "", "");
+                    mUserModel = new UserModel();
+                    mUserModel.setUid(profile.getId());
+                    mUserModel.setName(profile.getName());
                 }
             }
         });
@@ -117,11 +119,16 @@ public class LoginActivityViewModel extends ViewModel {
                     @Override
                     public void run() {
                         if (personPhoto != null) {
-
-                            mUserModel = new UserModel(account.getId(), account.getEmail(), account.getDisplayName(), "", "", personPhoto.toString());
-
+                            mUserModel = new UserModel();
+                            mUserModel.setUid(account.getId());
+                            mUserModel.setEmail(account.getEmail());
+                            mUserModel.setName(account.getDisplayName());
+                            mUserModel.setAvatar(personPhoto.toString());
                         } else {
-                            mUserModel = new UserModel(account.getId(), account.getEmail(), account.getDisplayName(), "", "", "");
+                            mUserModel = new UserModel();
+                            mUserModel.setUid(account.getId());
+                            mUserModel.setEmail(account.getEmail());
+                            mUserModel.setName(account.getDisplayName());
                         }
                     }
                 });
@@ -138,9 +145,16 @@ public class LoginActivityViewModel extends ViewModel {
     }
 
     private void checkDataUSer(FirebaseFirestore db, String uid) {
+        showProgressBar.setValue(false);
+
         GetDataUser.getInstance().getData(db, uid, new GetDataUser.IFindDataUser() {
             @Override
             public void onSuccess(UserModel mUserModel1) {
+            }
+
+            @Override
+            public void onSuccessAccount(AccountModel accountModel) {
+
             }
 
             @Override
@@ -158,18 +172,22 @@ public class LoginActivityViewModel extends ViewModel {
     }
 
     private void checkDataUSerEmail(FirebaseFirestore db, String uid) {
+        insertDataUser = new MutableLiveData<>();
+        showProgressBar.setValue(false);
         GetDataUser.getInstance().getData(db, uid, new GetDataUser.IFindDataUser() {
             @Override
             public void onSuccess(UserModel mUserModel) {
                 if (mUserModel.getName() == null || mUserModel.getName().isEmpty()) {
-                    Intent intent = new Intent(contextMutableLiveData.getValue(), InsertDataActivity.class);
-                    intent.putExtra("email", email.getValue());
-                    Toast.makeText(contextMutableLiveData.getValue(), "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
-                    contextMutableLiveData.getValue().startActivity(intent);
+                    insertDataUser.setValue(email.getValue());
                 } else {
                     mCheckDataUSer.setValue("Exist");
                     loginSuccess.setValue(true);
                 }
+            }
+
+            @Override
+            public void onSuccessAccount(AccountModel accountModel) {
+
             }
 
             @Override
@@ -179,10 +197,7 @@ public class LoginActivityViewModel extends ViewModel {
 
             @Override
             public void onEmpty() {
-                Toast.makeText(contextMutableLiveData.getValue(), "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(contextMutableLiveData.getValue(), InsertDataActivity.class);
-                intent.putExtra("email", email.getValue());
-                contextMutableLiveData.getValue().startActivity(intent);
+                insertDataUser.setValue(email.getValue());
             }
         });
     }

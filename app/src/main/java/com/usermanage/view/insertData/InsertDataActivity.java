@@ -14,13 +14,13 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.usermanage.R;
 import com.example.usermanage.databinding.ActivityInsertDataBinding;
 import com.google.android.material.snackbar.Snackbar;
+import com.usermanage.CloseKeyboardClickOutside;
 import com.usermanage.TransparentStatusBar;
 import com.usermanage.base.BaseActivity;
 import com.usermanage.view.main.MainActivity;
 import com.usermanage.viewModel.dataUser.GetUid;
 
 public class InsertDataActivity extends BaseActivity {
-    private TransparentStatusBar transparentStatusBar;
     private ActivityInsertDataBinding mDatabinding;
     private InsertDataActivityViewModel mViewModel;
     private View view;
@@ -29,14 +29,12 @@ public class InsertDataActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = new ViewModelProvider(InsertDataActivity.this).get(InsertDataActivityViewModel.class);
-        mDatabinding = DataBindingUtil.setContentView(InsertDataActivity.this, R.layout.activity_insert_data);
-        mDatabinding.setViewmodel(mViewModel);
-        mDatabinding.setLifecycleOwner(this);
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        transparentStatusBar = new TransparentStatusBar(this);
+        initUi();
+        initData();
+    }
+
+    private void initData() {
         String email = getIntent().getStringExtra("email");
-        view = findViewById(R.id.layoutMain);
         mViewModel.showEmail(email, GetUid.getInstance().get(this));
         mDatabinding.dpBirthday.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,6 +42,17 @@ public class InsertDataActivity extends BaseActivity {
                 mViewModel.selectBirthday(InsertDataActivity.this);
             }
         });
+    }
+
+    private void initUi() {
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        new TransparentStatusBar(this);
+        view = findViewById(R.id.layoutMain);
+        mViewModel = new ViewModelProvider(InsertDataActivity.this).get(InsertDataActivityViewModel.class);
+        mDatabinding = DataBindingUtil.setContentView(InsertDataActivity.this, R.layout.activity_insert_data);
+        mDatabinding.setViewmodel(mViewModel);
+        mDatabinding.setLifecycleOwner(this);
+        mDatabinding.layoutMain.setOnClickListener(new CloseKeyboardClickOutside(this));
         mViewModel.insertSuccess.observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {

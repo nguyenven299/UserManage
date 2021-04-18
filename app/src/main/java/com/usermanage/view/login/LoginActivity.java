@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
@@ -13,8 +14,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.usermanage.R;
-import com.google.android.material.snackbar.Snackbar;
-import com.usermanage.TransparentStatusBar;
 import com.example.usermanage.databinding.ActivityLoginBinding;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -23,17 +22,14 @@ import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.material.snackbar.Snackbar;
+import com.usermanage.CloseKeyboardClickOutside;
+import com.usermanage.TransparentStatusBar;
 import com.usermanage.base.BaseActivity;
-import com.usermanage.dao.userList.UserListDatabase;
-import com.usermanage.dao.userList.UserList;
-import com.usermanage.dao.user.DaoQuery;
-import com.usermanage.dao.user.User;
-import com.usermanage.dao.user.UserDatabase;
 import com.usermanage.view.forgotPassword.ForgotPasswordActivity;
+import com.usermanage.view.insertData.InsertDataActivity;
 import com.usermanage.view.main.MainActivity;
 import com.usermanage.view.register.RegisterActivity;
-
-import java.util.List;
 
 public class LoginActivity extends BaseActivity implements LifecycleOwner {
     private CallbackManager callbackManager = CallbackManager.Factory.create();
@@ -49,14 +45,20 @@ public class LoginActivity extends BaseActivity implements LifecycleOwner {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        new TransparentStatusBar(this);
-        mDatabinding = DataBindingUtil.setContentView(LoginActivity.this, R.layout.activity_login);
-        mViewModel = new ViewModelProvider(LoginActivity.this).get(LoginActivityViewModel.class);
-        view = mDatabinding.layoutMain;
-        mDatabinding.setViewmodel(mViewModel);
-        mDatabinding.setLifecycleOwner(this);
-        mViewModel.contextMutableLiveData.setValue(this);
-        mViewModel.activityMutableLiveData.setValue(LoginActivity.this);
+        initUi();
+        initData();
+    }
+
+    private void initData() {
+        mViewModel.loginSuccess.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) {
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    finish();
+                }
+            }
+        });
         mViewModel.showPassword.observe(LoginActivity.this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
@@ -67,6 +69,50 @@ public class LoginActivity extends BaseActivity implements LifecycleOwner {
                 }
             }
         });
+        mViewModel.loginResultFail.observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                if (s == "The password is invalid or the user does not have a password.") {
+                    Toast.makeText(LoginActivity.this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, s, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        mViewModel.showProgressBar.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) {
+                    mDatabinding.progressBar.setVisibility(View.VISIBLE);
+                } else {
+                    mDatabinding.progressBar.setVisibility(View.GONE);
+                }
+            }
+        });
+        mViewModel.insertDataUser.observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                if (s != null) {
+                    Toast.makeText(LoginActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(LoginActivity.this, InsertDataActivity.class);
+                    intent.putExtra("email", s);
+                    startActivity(intent);
+                }
+            }
+        });
+    }
+
+    private void initUi() {
+        new TransparentStatusBar(this);
+        new CloseKeyboardClickOutside(this);
+        mDatabinding = DataBindingUtil.setContentView(LoginActivity.this, R.layout.activity_login);
+        mViewModel = new ViewModelProvider(LoginActivity.this).get(LoginActivityViewModel.class);
+        view = mDatabinding.layoutMain;
+        mDatabinding.setViewmodel(mViewModel);
+        mDatabinding.setLifecycleOwner(this);
+        mDatabinding.layoutMain.setOnClickListener(new CloseKeyboardClickOutside(this));
+        mViewModel.contextMutableLiveData.setValue(this);
+        mViewModel.activityMutableLiveData.setValue(LoginActivity.this);
         mDatabinding.btLoginGG.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,7 +125,6 @@ public class LoginActivity extends BaseActivity implements LifecycleOwner {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 mViewModel.onClickLoginFB();
-
             }
 
             @Override
@@ -91,16 +136,7 @@ public class LoginActivity extends BaseActivity implements LifecycleOwner {
             public void onError(FacebookException error) {
                 Log.d("errorFb", "onError: " + error.getMessage());
             }
-        });
-        mViewModel.loginSuccess.observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) {
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    finish();
-                }
 
-            }
         });
         mDatabinding.btSignup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,16 +150,6 @@ public class LoginActivity extends BaseActivity implements LifecycleOwner {
                 startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
             }
         });
-        UserDatabase userDatabase = UserDatabase.getInsance(this);
-        DaoQuery userDao = userDatabase.daoQuery();
-        List<User> users = userDao.getAll();
-        for (User user : users) {
-        }
-        UserListDatabase userListDatabase = UserListDatabase.getInsance(this);
-        List<UserList> userLists = userListDatabase.daoQueryList().getAll();
-        for (UserList userList : userLists) {
-
-        }
     }
 
     @Override

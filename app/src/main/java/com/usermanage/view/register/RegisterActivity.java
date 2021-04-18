@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
@@ -16,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.example.usermanage.R;
 import com.example.usermanage.databinding.ActivityRegisterBinding;
 import com.google.android.material.snackbar.Snackbar;
+import com.usermanage.CloseKeyboardClickOutside;
 import com.usermanage.TransparentStatusBar;
 import com.usermanage.base.BaseActivity;
 import com.usermanage.view.insertData.InsertDataActivity;
@@ -30,20 +32,11 @@ public class RegisterActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        mDatabinding = DataBindingUtil.setContentView(this, R.layout.activity_register);
-        mViewModel = new ViewModelProvider(this).get(RegisterActivityViewModel.class);
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        view = mDatabinding.layoutMain;
-        new TransparentStatusBar(this);
-        mDatabinding.setViewmodel(mViewModel);
-        mDatabinding.setLifecycleOwner(this);
-        mViewModel.contextMutableLiveData.setValue(this);
-        this.setSupportActionBar(mDatabinding.toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("");
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
-        Glide.with(RegisterActivity.this).load(R.drawable.ic_launcher_foreground).into(mDatabinding.imIconLogo);
-        mViewModel.activityMutableLiveData.setValue(this);
+        initUi();
+        initData();
+    }
+
+    private void initData() {
         mViewModel.m_ShowPassword.observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
@@ -75,6 +68,35 @@ public class RegisterActivity extends BaseActivity {
                 }
             }
         });
+        mViewModel.registerResultFail.observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                if (s == "The email address is already in use by another account.") {
+                    Toast.makeText(RegisterActivity.this, "Tài khoản đã tồn tại", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(RegisterActivity.this, "Có lỗi xảy ra, hãy thử lại sau", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        });
+    }
+
+    private void initUi() {
+        new TransparentStatusBar(this);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        mDatabinding = DataBindingUtil.setContentView(this, R.layout.activity_register);
+        mViewModel = new ViewModelProvider(this).get(RegisterActivityViewModel.class);
+        view = mDatabinding.layoutMain;
+        mDatabinding.setViewmodel(mViewModel);
+        mDatabinding.setLifecycleOwner(this);
+        mDatabinding.layoutMain.setOnClickListener(new CloseKeyboardClickOutside(this));
+        mViewModel.contextMutableLiveData.setValue(this);
+        this.setSupportActionBar(mDatabinding.toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
+        Glide.with(RegisterActivity.this).load(R.drawable.ic_launcher_foreground).into(mDatabinding.imIconLogo);
+        mViewModel.activityMutableLiveData.setValue(this);
     }
 
     @Override

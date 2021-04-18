@@ -2,22 +2,18 @@ package com.usermanage.view.register;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.usermanage.model.AccountModel;
-import com.usermanage.viewModel.dataUser.SaveUid;
-import com.usermanage.view.insertData.InsertDataActivity;
-import com.usermanage.viewModel.authentication.CreateUserEmail;
+import com.google.common.collect.Multimap;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.usermanage.model.AccountModel;
+import com.usermanage.viewModel.authentication.CreateUserEmail;
+import com.usermanage.viewModel.dataUser.SaveUid;
 
 public class RegisterActivityViewModel extends ViewModel {
 
@@ -35,6 +31,7 @@ public class RegisterActivityViewModel extends ViewModel {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
     public MutableLiveData<Boolean> registerSuccess = new MutableLiveData<>(false);
+    public MutableLiveData<String> registerResultFail = new MutableLiveData<>();
 
     public void onClick() {
         String Empty = "Trường này không được trống";
@@ -44,32 +41,35 @@ public class RegisterActivityViewModel extends ViewModel {
         if (mEmail == null || mEmail.isEmpty() || mEmail.equals("defined")) {
             errorEmail.setValue(Empty);
         } else {
-            mAccountModel.setAccount(mEmail);
+            mAccountModel.setAccount(mEmail.trim());
         }
         if (mPassword == null || mPassword.isEmpty() || mPassword.equals("defined")) {
             errorPassword.setValue(Empty);
+        } else if (mPassword.length() < 6) {
+            errorPassword.setValue("Mật khẩu hơn 6 ký tự");
         } else {
-            mAccountModel.setPassword(mPassword);
+            mAccountModel.setPassword(mPassword.trim());
         }
         if (mRePassword == null || mRePassword.isEmpty() || mRePassword.equals("defined")) {
             errorRepassword.setValue(Empty);
+        } else if (mRePassword.length() < 6) {
+            errorPassword.setValue("Mật khẩu hơn 6 ký tự");
         } else {
-            mAccountModel.setRePassword(mRePassword);
+            mAccountModel.setRePassword(mRePassword.trim());
         }
         if (mRePassword != null && mPassword != null && mRePassword.equals(mPassword) && !mRePassword.isEmpty() && !mPassword.isEmpty()) {
-            CreateUserEmail.getInstance().createUser(mAuth, mAccountModel, new CreateUserEmail.ICreateUserEmail() {
+            CreateUserEmail.getInstance().createUser(mAuth, mFirestore, mAccountModel, new CreateUserEmail.ICreateUserEmail() {
                 @Override
                 public void onSuccess(String uid) {
                     SaveUid.getInstance().saved((Activity) contextMutableLiveData.getValue(), uid);
                     SaveUid.getInstance().saved(activityMutableLiveData.getValue(), uid);
                     registerSuccess.setValue(true);
-
                 }
 
                 @Override
                 public void onFail(String fail) {
-                    Toast.makeText(contextMutableLiveData.getValue(), "Đăng ký thất bại", Toast.LENGTH_SHORT).show();
-                    Log.d("errorRegister", "onFail: " + fail);
+
+                    registerResultFail.setValue(fail);
                 }
             });
         } else if (!mRePassword.equals(mPassword)) {

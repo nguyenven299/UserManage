@@ -1,5 +1,7 @@
 package com.usermanage.viewModel.dataUser;
 
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 
 import com.google.firebase.firestore.DocumentReference;
@@ -7,6 +9,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.usermanage.model.AccountModel;
 import com.usermanage.model.UserModel;
 
 public class GetDataUser {
@@ -20,6 +23,8 @@ public class GetDataUser {
 
     public interface IFindDataUser {
         void onSuccess(UserModel userModel);
+
+        void onSuccessAccount(AccountModel accountModel);
 
         void onExist();
 
@@ -36,6 +41,7 @@ public class GetDataUser {
                     if (value.exists()) {
                         iFindDataUser.onExist();
                         iFindDataUser.onSuccess(value.toObject(UserModel.class));
+                        iFindDataUser.onSuccessAccount(value.toObject(AccountModel.class));
                     } else {
                         iFindDataUser.onEmpty();
                     }

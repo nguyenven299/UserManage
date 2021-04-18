@@ -20,6 +20,9 @@ public interface DaoQuery {
     @Update
     void update(User... users);
 
+    @Query("UPDATE User SET Avatar =:avatar Where id=1")
+    void updateAvatar(String avatar);
+
     @Query("SELECT * FROM User")
     User getUser();
 

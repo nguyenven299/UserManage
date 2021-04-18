@@ -67,15 +67,15 @@ public class GetPathUri {
             }
         }
         // MediaStore (and general)
-        else if ("content".equalsIgnoreCase(uri.getScheme())) {
-
-            return getDataColumn(context, uri, null, null);
+        else if (uri != null && uri.getScheme() != null) {
+            if ("content".equalsIgnoreCase(uri.getScheme())) {
+                return getDataColumn(context, uri, null, null);
+            }
+            // File
+            else if ("file".equalsIgnoreCase(uri.getScheme())) {
+                return uri.getPath();
+            }
         }
-        // File
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
-        }
-
         return "";
     }
 

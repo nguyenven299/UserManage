@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.usermanage.model.AccountModel;
 import com.usermanage.model.UserModel;
 import com.usermanage.viewModel.authentication.SavaDateSession;
 import com.usermanage.viewModel.dataUser.GetDataUser;
@@ -14,13 +15,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class MainActivityViewModel extends ViewModel {
     public MutableLiveData<Activity> activityMutableLiveData = new MutableLiveData<>();
     public FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-    public MutableLiveData<List<UserModel>> listMutableLiveData = new MutableLiveData<>();
     private String mCurrentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
     private Calendar mCalendar = Calendar.getInstance();
     private SimpleDateFormat mDateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -50,6 +49,10 @@ public class MainActivityViewModel extends ViewModel {
 
             @Override
             public void onEmpty() {
+
+            }
+            @Override
+            public void onSuccessAccount(AccountModel accountModel) {
 
             }
         });

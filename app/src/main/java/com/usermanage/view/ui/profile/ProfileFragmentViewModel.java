@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -14,12 +15,15 @@ import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
+import com.usermanage.ConvertUriToBitmapChangedRotation;
 import com.usermanage.dao.user.User;
 import com.usermanage.dao.user.UserDatabase;
+import com.usermanage.model.AccountModel;
 import com.usermanage.model.UserModel;
 import com.usermanage.viewModel.dataUser.GetDataUser;
 import com.usermanage.viewModel.dataUser.UpdateAvatar;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -66,6 +70,11 @@ public class ProfileFragmentViewModel extends ViewModel {
                 }
 
                 @Override
+                public void onSuccessAccount(AccountModel accountModel) {
+
+                }
+
+                @Override
                 public void onExist() {
 
                 }
@@ -96,6 +105,10 @@ public class ProfileFragmentViewModel extends ViewModel {
                 }
 
                 @Override
+                public void onSuccessAccount(AccountModel accountModel) {
+                }
+
+                @Override
                 public void onEmpty() {
 
                 }
@@ -122,40 +135,15 @@ public class ProfileFragmentViewModel extends ViewModel {
     }
 
     public Bitmap getBitmapFromUri(Uri uri) {
-        Bitmap bitmapRotated = null;
-        try {
-            ExifInterface exif = new ExifInterface(getPath(contextMutableLiveData.getValue(), uri));
-            int rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-            int rotationInDegrees = exifToDegrees(rotation);
-            Matrix matrix = new Matrix();
-            if (rotationInDegrees != 0) {
-                matrix.postRotate(rotationInDegrees);
-            }
-            Bitmap bitmap = BitmapFactory.decodeFile(getPath(contextMutableLiveData.getValue(), uri));
-            bitmapRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
-        } catch (IOException e) {
-            Log.e("WallOfLightApp", e.getMessage());
-        }
-        Bitmap finalBitmapRotated = bitmapRotated;
+        Bitmap bitmap = new ConvertUriToBitmapChangedRotation().getBitmapFromUri(uri, contextMutableLiveData.getValue());
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                updateImageDB(finalBitmapRotated);
+                updateImageDB(bitmap);
             }
         });
         thread.start();
-        return bitmapRotated;
-    }
-
-    private static int exifToDegrees(int exifOrientation) {
-        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
-            return 90;
-        } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {
-            return 180;
-        } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {
-            return 270;
-        }
-        return 0;
+        return bitmap;
     }
 
     private void updateImageDB(Bitmap bitmap) {
